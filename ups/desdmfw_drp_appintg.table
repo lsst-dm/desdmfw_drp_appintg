@@ -1,0 +1,4 @@
+#setupRequired(despymisc)
+#setupRequired(IntegrationUtils) 
+#setupRequired(despydb)
+envPrepend(PATH, ${PRODUCT_DIR}/bin)
