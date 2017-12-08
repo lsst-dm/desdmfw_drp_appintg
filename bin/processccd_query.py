@@ -1,7 +1,9 @@
 #!/usr/bin/env python
 
-""" Query that returns all the inputs for processccd.py
-    matching the calibrations by date and version to the image """
+"""Query that returns all the inputs for processccd.py.
+
+The returned inputs match the calibrations by date and version to the image.
+"""
 
 import argparse
 import sys
@@ -10,11 +12,8 @@ from despymisc import miscutils
 from intgutils import queryutils
 from despydb import desdbi
 
-######################################################################
-
 
 def query_db(args):
-
     rawinfo = {}
     dbh = desdbi.DesDbi(None, args.section)
     #sql = "select filename,taiObs,expId,pointing,visit,dateObs,frameId,filter,field,pa,exptime,ccdtemp,ccd,proposal,config,autoguider from image where filetype='hsc_raw' and visit=%s and ccd=%s" % (dbh.get_named_bind_string('visit'), dbh.get_named_bind_string('ccd'))
@@ -113,12 +112,13 @@ def query_db(args):
 
     return rawinfo, list(flabelset)
 
-######################################################################
-
 
 def reformat_data(rawinfo, filelabels):
-    """ change data structure of queried data to meet requirements of convert_multiple_files_to_lines """
+    """Change structure of queried data.
 
+    Changes data structure of queried data to meet requirements of
+    convert_multiple_files_to_lines.
+    """
     newdata = []
     for rdict in list(rawinfo.values()):
         lineinfo = []
@@ -129,7 +129,6 @@ def reformat_data(rawinfo, filelabels):
     return newdata
 
 
-######################################################################
 def main(argv):
     parser = argparse.ArgumentParser(
         description='Dummy query that reads fake query results from a semi-colon separated file')
