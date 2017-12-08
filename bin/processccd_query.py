@@ -80,7 +80,7 @@ def query_db(args):
         sql += " and not exists (select visit from blacklist bl where i.visit=bl.visit and i.ccd=bl.ccd and bl.reason_code in (%s)) " % (
             ",".join(miscutils.fwsplit(args.blacklist_code, ',')))
 
-    print "sql =", sql
+    print("sql =", sql)
 
     curs = dbh.cursor()
     curs.prepare(sql)
@@ -90,7 +90,7 @@ def query_db(args):
     desc = [d[0].lower() for d in curs.description]
     for row in curs:
         #print row
-        cinfo = dict(zip(desc, row))
+        cinfo = dict(list(zip(desc, row)))
 
         # since writing to WCL, convert NULL to __KEEP__NONE__
         for k in cinfo:
@@ -120,7 +120,7 @@ def reformat_data(rawinfo, filelabels):
     """ change data structure of queried data to meet requirements of convert_multiple_files_to_lines """
 
     newdata = []
-    for rdict in rawinfo.values():
+    for rdict in list(rawinfo.values()):
         lineinfo = []
         for label in filelabels:
             lineinfo.append(rdict[label])
