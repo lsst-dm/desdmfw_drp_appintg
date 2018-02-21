@@ -37,7 +37,7 @@ def query_db(args):
     sql = """select distinct o.tract, %s, %s 
              from %s
              where c.filename=l.filename and i.filetype=%s and i.visit=o.visit and 
-             i.ccd=o.ccd and l.min_date <= to_date(i.dateobs, 'YYYY-MM-DD') and 
+             l.min_date <= to_date(i.dateobs, 'YYYY-MM-DD') and
              to_date(i.dateobs, 'YYYY-MM-DD') <= l.max_date and i.ccd=c.ccd and 
              (c.filter is null or c.filter=i.filter) and o.version=%s and l.version=%s and o.tract = %s""" % \
           (','.join(imgselect), 
@@ -75,6 +75,9 @@ def query_db(args):
 
     if args.blacklist_code is not None:
         sql += " and not exists (select visit from blacklist bl where i.visit=bl.visit and i.ccd=bl.ccd and bl.reason_code in (%s)) " % (",".join(miscutils.fwsplit(args.blacklist_code, ',')))
+
+    if args.require_ccd_overlap:
+        sql += " and i.ccd=o.ccd"
 
     print "sql =", sql
 
@@ -145,6 +148,7 @@ def main(argv):
     parser.add_argument('--visittag', required=False, action='store')
     parser.add_argument('--blacklist', required=False, action='store_false', help="Doesn't include if exists in blacklist table")
     parser.add_argument('--blacklist_code', required=False, action='store', help="Use if only want to blacklist for certain codes, comma-separated list")
+    parser.add_argument('--require_ccd_overlap', required=False, action='store_true', help="If True, ignore CCds that don't overlap with the patch")
     args = parser.parse_args(argv)
 
     data, filelabels = query_db(args)
